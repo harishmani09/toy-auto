@@ -120,7 +120,8 @@ class CreateForm:
             # error_message = str(e)
             # stack_trace= str(traceback.format_exc())
             # self.write_logs(error_message,stack_trace)
-            df.loc[item.name,'Error'] = str(e)
+            if df is not None:
+                df.loc[item.name,'Error'] = str(e)
 
             # if 'Error' not in item:
             #     item['Error'] = []
@@ -141,7 +142,8 @@ class CreateForm:
                 if 'Error' not in df.columns:
                     df['Error']=''
                 # Update 'Error' column in the DataFrame
-                df.at[index,'Error'] = ', '.join(errors)
+                if df is not None:
+                    df.at[index,'Error'] = ', '.join(errors)
 
             #fill form fields and log errors
             self.fill_form_and_log_errors(row)
@@ -150,15 +152,19 @@ class CreateForm:
         # data['Error'] = data['Error'].apply(lambda x: ', '.join(x) if isinstance(x,list) else x)
 
         # Write the DataFrame back to the spreadsheet with error messages
-        df.to_excel('output_files/data_with_errors_new.xlsx', index=False)
+        if df is not None:
+            df.to_excel('static/output_files/data_with_errors_new.xlsx', index=False)
 
 
 
 
 #create an instance of the create profile
-driver = webdriver.Chrome(options=chrome_options)
-url = "https://tutorialsninja.com/demo/index.php?route=account/register"
-df = pd.read_excel('input_files/tutorial_ninja.xlsx')
+# driver = webdriver.Chrome(options=chrome_options)
+# url = "https://tutorialsninja.com/demo/index.php?route=account/register"
+# df = pd.read_excel('input_files/tutorial_ninja.xlsx')
+driver = None 
+df = None 
+url = None 
 
 
 # create_profile = CreateForm(driver,url)

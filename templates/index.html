@@ -35,21 +35,6 @@
               aria-current="page"
               >Dashboard</a
             >
-            <a
-              href="#"
-              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-              >Team</a
-            >
-            <a
-              href="#"
-              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-              >Projects</a
-            >
-            <a
-              href="#"
-              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-              >Calendar</a
-            >
           </div>
         </div>
         <div class="hidden sm:ml-6 sm:flex sm:items-center">
@@ -295,8 +280,15 @@
             </div>
             <div class="mt-5">
               <form action="/process" method="POST">
+                <div class="mb-2">
+                  {% for file in files %}
+                  <input type="checkbox" name="file" value="{{ file }}" /> {{
+                  file }}
+                  <br />
+                  {% endfor %}
+                </div>
                 <button
-                  type="button"
+                  type="submit"
                   class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
                   Process Now!

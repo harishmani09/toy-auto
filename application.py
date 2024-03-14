@@ -32,27 +32,27 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = 'supersecret#key'
+application = Flask(__name__)
+application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+application.config['SECRET_KEY'] = 'supersecret#key'
 
 
-files = os.path.join('static/files',)
 
-@app.route('/')
+
+@application.route('/')
 def home():
-    filenames = os.listdir(app.config['UPLOAD_FOLDER'])
+    filenames = os.listdir(application.config['UPLOAD_FOLDER'])
     return render_template('index.html',files=filenames)
 
-@app.route('/delete', methods=['POST'])
+@application.route('/delete', methods=['POST'])
 def delete_file():
     files_to_delete = request.form.getlist('file')
     for file_name in files_to_delete:
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'],file_name))  
+        os.remove(os.path.join(application.config['UPLOAD_FOLDER'],file_name))  
     return redirect(url_for('home'))
 
 
-@app.route('/upload',methods=['GET','POST'])
+@application.route('/upload',methods=['GET','POST'])
 def upload_file():
     if request.method == 'POST':
         #check if the post reuqest has file part
@@ -67,7 +67,7 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            file.save(os.path.join(application.config['UPLOAD_FOLDER'],filename))
             # return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
         return redirect('/')
             # return redirect(url_for('download',name=filename))
@@ -75,25 +75,26 @@ def upload_file():
     
 
 
-@app.route('/process', methods=['GET','POST'])
+@application.route('/process', methods=['GET','POST'])
 def process():
     global df, driver, url 
     if driver is None:
         driver = webdriver.Chrome(options=chrome_options)
     if df is None:
-        df = pd.read_excel('input_files/tutorial_ninja.xlsx')
+        df = pd.read_excel('static/files/tutorial_ninja.xlsx')
     if url is None:
         url = "https://tutorialsninja.com/demo/index.php?route=account/register"
     
-    create_profile = CreateForm()
+    create_profile = CreateForm(driver,url)
     create_profile.process_data(df)
-    driver.quit()
     
-    return redirect(url_for('index'))
+    driver.quit()   
+    return redirect(url_for('home'))
 
+    
 
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    application.run(debug=True)
     
